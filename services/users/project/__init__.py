@@ -1,7 +1,12 @@
 import os
 
+import click
+
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask.cli import with_appcontext
+
+import unittest
 
 app = Flask(__name__)
 
@@ -32,3 +37,28 @@ def ping_pong():
         'message': 'pong!',
         'haha': 'hi there'
         })
+
+@click.command('recreate_db')
+@with_appcontext
+def recreate_db_init():
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
+
+@click.command('test')
+@with_appcontext
+def test_init():
+    """ Runs the tests without code coverage"""
+    """ test path should be a directory that contains the tests you want to run, not the path to a single module. """
+    """ Try just using . as the directory (assuming you're running it from the top-level project/app directory) and see if that helps. """
+    tests = unittest.TestLoader().discover('.', pattern='test*.py')
+    result = unittest.TextTestRunner(verbosity=2).run(tests)
+    if result.wasSuccessful():
+        return 0
+    return 1
+
+def init_app(app):
+    app.cli.add_command(recreate_db_init)
+    app.cli.add_command(test_init)
+
+init_app(app)
