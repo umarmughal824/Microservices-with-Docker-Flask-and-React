@@ -8,7 +8,6 @@ services:
       - './services/users:/usr/src/app'
     ports:
       - 5001:5000
-    tty: true
     environment:
       - FLASK_APP=project/__init__.py
       - FLASK_ENV=development
