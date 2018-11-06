@@ -4,6 +4,7 @@ from project import db, bcrypt
 
 from sqlalchemy.sql import func
 
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -18,7 +19,7 @@ class User(db.Model):
         self.username = username
         self.email = email
         self.password = bcrypt.generate_password_hash(
-            password, 
+            password,
             current_app.config.get('BCRYPT_LOG_ROUNDS')
         ).decode()
 
