@@ -3,4 +3,7 @@ htmlcov/
 
 __pycache__/
 
+.settings/
 
+.project
+.pydevproject
