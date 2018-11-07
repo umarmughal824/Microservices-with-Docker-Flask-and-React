@@ -6,3 +6,4 @@ migrations
 .dockerignore
 Dockerfile-dev
 Dockerfile-prod
+localTestEnvSet
