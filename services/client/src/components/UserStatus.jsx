@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 class UserStatus extends Component {
 
@@ -13,7 +14,9 @@ class UserStatus extends Component {
   };
 
   componentDidMount() {
-    this.getUserStatus();
+    if (this.props.isAuthenticated) {
+      this.getUserStatus();
+    }
   };
 
   getUserStatus(event) {
@@ -27,7 +30,6 @@ class UserStatus extends Component {
     };
     return axios(options)
     .then((res) => {
-      // new
       this.setState({
         email: res.data.data.email,
         id: res.data.data.id,
@@ -38,6 +40,11 @@ class UserStatus extends Component {
   };
 
   render() {
+    if (!this.props.isAuthenticated) {
+      return (
+        <p>You must be logged in to view this. Click <Link to="/login">here</Link> to log back in.</p>
+      )
+    };
     return (
         <div>
           <ul>
