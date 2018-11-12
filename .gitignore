@@ -2,6 +2,7 @@ env/
 htmlcov/
 migrations/
 __pycache__/
+__snapshots__/
 
 .settings/
 
