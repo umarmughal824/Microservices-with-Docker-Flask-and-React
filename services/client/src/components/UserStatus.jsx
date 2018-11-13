@@ -9,7 +9,9 @@ class UserStatus extends Component {
     this.state = {
       email: '',
       id: '',
-      username: ''
+      username: '',
+      active: '',
+      admin: ''
     };
   };
 
@@ -33,7 +35,9 @@ class UserStatus extends Component {
       this.setState({
         email: res.data.data.email,
         id: res.data.data.id,
-        username: res.data.data.username
+        username: res.data.data.username,
+        active: String(res.data.data.active),
+        admin: String(res.data.data.admin),
       })
     })
     .catch((error) => { console.log(error); });
