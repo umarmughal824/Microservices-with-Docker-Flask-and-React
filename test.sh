@@ -20,11 +20,11 @@ inspect $? client
 docker-compose -f docker-compose-dev.yml down
 
 # run e2e tests
-docker-compose -f docker-compose-prod.yml up -d --build
-docker-compose -f docker-compose-prod.yml run users python manage.py recreate-db
-./node_modules/.bin/cypress run --config baseUrl=http://localhost
+docker-compose -f docker-compose-dev.yml up -d --build
+docker-compose -f docker-compose-dev.yml exec users python manage.py recreate-db
+docker-compose -f docker-compose-dev.yml exec client ./node_modules/.bin/cypress run --config baseUrl=http://localhost
 inspect $? e2e
-docker-compose -f docker-compose-prod.yml down
+docker-compose -f docker-compose-dev.yml down
 
 # return proper code
 
