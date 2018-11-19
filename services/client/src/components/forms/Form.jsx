@@ -122,7 +122,14 @@ class Form extends Component {
       this.clearForm();
       this.props.loginUser(res.data.auth_token);
     })
-    .catch((err) => { console.log(err); });
+    .catch((err) => { 
+      if (formType === 'Login') {
+        this.props.createMessage('Email or password is incorrect.', 'danger');
+      };
+      if (formType === 'Register') {
+        this.props.createMessage('That user already exists.', 'danger');
+      };
+    });
   };
 
   render() {
