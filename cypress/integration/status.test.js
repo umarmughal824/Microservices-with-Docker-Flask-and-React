@@ -24,9 +24,10 @@ describe('Status', () => {
      .get('input[name="password"]').type(password)
      .get('input[type="submit"]').click()
      .get('.navbar-burger').click();
-   cy.wait(400);
+   cy.wait(600);
    // assert '/status' is displayed properly
    cy.visit('/status');
+
    cy.get('.navbar-burger').click();
    cy.contains('User Status').click();
    cy.get('li > strong').contains('User ID:')
