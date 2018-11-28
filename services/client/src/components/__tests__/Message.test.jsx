@@ -4,13 +4,17 @@ import renderer from 'react-test-renderer';
 
 import Message from '../Message';
 
+
 describe('When given a success message', () => {
+
   const removeMessage = jest.fn();
+
   const messageSuccessProps = {
     messageName: 'Hello, World!',
     messageType: 'success',
     removeMessage: removeMessage,
   }
+
   it(`Message renders properly`, () => {
     const wrapper = shallow(<Message {...messageSuccessProps} />);
     const element = wrapper.find('.notification.is-success');
@@ -25,21 +29,26 @@ describe('When given a success message', () => {
     button.simulate('click');
     expect(removeMessage).toHaveBeenCalledTimes(1);
   });
+
   test('Message renders a snapshot properly', () => {
     const tree = renderer.create(
       <Message {...messageSuccessProps} />
     ).toJSON();
     expect(tree).toMatchSnapshot();
   });
+
 });
 
 describe('When given a danger message', () => {
+
   const removeMessage = jest.fn();
+
   const messageDangerProps = {
     messageName: 'Hello, World!',
     messageType: 'danger',
     removeMessage: removeMessage,
   }
+
   it(`Message renders properly`, () => {
     const wrapper = shallow(<Message {...messageDangerProps} />);
     const element = wrapper.find('.notification.is-danger');
@@ -54,10 +63,12 @@ describe('When given a danger message', () => {
     button.simulate('click');
     expect(removeMessage).toHaveBeenCalledTimes(1);
   });
+
   test('Message renders a snapshot properly', () => {
     const tree = renderer.create(
       <Message {...messageDangerProps} />
     ).toJSON();
     expect(tree).toMatchSnapshot();
   });
+
 });

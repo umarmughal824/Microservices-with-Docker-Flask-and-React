@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 class Logout extends Component {
-
   componentDidMount() {
     this.props.logoutUser();
   };
-
   render() {
     return (
       <div>

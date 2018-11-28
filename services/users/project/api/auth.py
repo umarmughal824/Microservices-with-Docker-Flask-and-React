@@ -1,9 +1,13 @@
+# services/users/project/api/auth.py
+
+
 from flask import Blueprint, jsonify, request
 from sqlalchemy import exc, or_
 
-from project.api.utils import authenticate
 from project.api.models import User
 from project import db, bcrypt
+from project.api.utils import authenticate
+
 
 auth_blueprint = Blueprint('auth', __name__)
 

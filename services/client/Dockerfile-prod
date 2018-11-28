@@ -1,6 +1,7 @@
 ###########
 # BUILDER #
 ###########
+
 # base image
 FROM node:10.4.1-alpine as builder
 
@@ -23,9 +24,11 @@ ENV NODE_ENV $NODE_ENV
 COPY . /usr/src/app
 RUN npm run build
 
+
 #########
 # FINAL #
 #########
+
 # base image
 FROM nginx:1.15.0-alpine
 

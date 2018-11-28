@@ -1,6 +1,6 @@
-import renderer from 'react-test-renderer';
 import React from 'react';
 import { shallow } from 'enzyme';
+import renderer from 'react-test-renderer';
 
 import UsersList from '../UsersList';
 
@@ -19,7 +19,12 @@ const users = [
     'id': 2,
     'username': 'michaelherman'
   }
-];
+]
+
+test('UsersList renders a snapshot properly', () => {
+  const tree = renderer.create(<UsersList users={users}/>).toJSON();
+  expect(tree).toMatchSnapshot();
+});
 
 test('UsersList renders properly', () => {
   const wrapper = shallow(<UsersList users={users}/>);
@@ -46,9 +51,4 @@ test('UsersList renders properly', () => {
   expect(td.get(2).props.children).toBe('michael');
   expect(td.get(3).props.children).toBe('true');
   expect(td.get(4).props.children).toBe('false');
-});
-
-test('UsersList renders a snapshot properly', () => {
-  const tree = renderer.create(<UsersList users={users}/>).toJSON();
-  expect(tree).toMatchSnapshot();
 });

@@ -1,5 +1,7 @@
 version: '3.6'
+
 services:
+
   users:
     build:
       context: ./services/users
@@ -8,13 +10,13 @@ services:
       - 5000
     environment:
       - FLASK_ENV=production
-      - FLASK_APP=project
       - APP_SETTINGS=project.config.StagingConfig
       - DATABASE_URL=postgres://postgres:postgres@users-db:5432/users_stage
       - DATABASE_TEST_URL=postgres://postgres:postgres@users-db:5432/users_test
       - SECRET_KEY=my_precious
     depends_on:
       - users-db
+
   users-db:
     build:
       context: ./services/users/project/db
@@ -24,6 +26,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
   client:
     container_name: client
     build:
@@ -36,6 +39,7 @@ services:
       - 80
     depends_on:
       - users
+
   swagger:
     build:
       context: ./services/swagger
@@ -46,6 +50,7 @@ services:
       - URL=swagger.json
     depends_on:
       - users
+
   nginx:
     build:
       context: ./services/nginx

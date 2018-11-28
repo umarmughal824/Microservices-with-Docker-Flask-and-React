@@ -1,11 +1,14 @@
+# services/users/project/tests/test_auth.py
+
+
 import json
 
 from flask import current_app
 
 from project import db
 from project.api.models import User
-from tests.base import BaseTestCase
-from tests.utils import add_user
+from project.tests.base import BaseTestCase
+from project.tests.utils import add_user
 
 
 class TestAuthBlueprint(BaseTestCase):
@@ -235,7 +238,7 @@ class TestAuthBlueprint(BaseTestCase):
             self.assertTrue(data['data']['username'] == 'test')
             self.assertTrue(data['data']['email'] == 'test@test.com')
             self.assertTrue(data['data']['active'])
-            self.assertFalse(data['data']['admin'])
+            self.assertFalse(data['data']['admin'])  # new
             self.assertEqual(response.status_code, 200)
 
     def test_invalid_status(self):
@@ -267,7 +270,7 @@ class TestAuthBlueprint(BaseTestCase):
             token = json.loads(resp_login.data.decode())['auth_token']
             response = self.client.get(
                 '/auth/logout',
-                headers={'Authorization':f'Bearer {token}'}
+                headers={'Authorization': f'Bearer {token}'}
             )
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'fail')

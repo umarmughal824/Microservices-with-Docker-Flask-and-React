@@ -4,6 +4,7 @@ import { MemoryRouter as Router } from 'react-router-dom';
 
 import App from '../../App';
 
+
 beforeAll(() => {
   global.localStorage = {
     getItem: () => 'someToken'

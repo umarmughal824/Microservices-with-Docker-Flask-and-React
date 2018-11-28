@@ -5,8 +5,8 @@ import { Redirect } from 'react-router-dom';
 import { registerFormRules, loginFormRules } from './form-rules.js';
 import FormErrors from './FormErrors.jsx';
 
-class Form extends Component {
 
+class Form extends Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -17,24 +17,60 @@ class Form extends Component {
       },
       registerFormRules: registerFormRules,
       loginFormRules: loginFormRules,
+      formRules: '',
       valid: false,
     };
     this.handleUserFormSubmit = this.handleUserFormSubmit.bind(this);
     this.handleFormChange = this.handleFormChange.bind(this);
   };
-
   componentDidMount() {
     this.clearForm();
     this.validateForm();
   };
-
   componentWillReceiveProps(nextProps) {
     if (this.props.formType !== nextProps.formType) {
       this.clearForm();
       this.validateForm();
     };
   };
-
+  clearForm() {
+    this.setState({
+      formData: {username: '', email: '', password: ''}
+    });
+  };
+  handleFormChange(event) {
+    const obj = this.state.formData;
+    obj[event.target.name] = event.target.value;
+    this.setState(obj);
+    this.validateForm();
+  };
+  handleUserFormSubmit(event) {
+    event.preventDefault();
+    const formType = this.props.formType
+    const data = {
+      email: this.state.formData.email,
+      password: this.state.formData.password
+    };
+    if (formType === 'Register') {
+      data.username = this.state.formData.username
+    };
+    const url = `${process.env.REACT_APP_USERS_SERVICE_URL}/auth/${formType.toLowerCase()}`;
+    axios.post(url, data)
+    .then((res) => {
+      this.clearForm();
+      this.props.loginUser(res.data.auth_token);
+    })
+    .catch((err) => {
+      // new
+      if (formType === 'Login') {
+        this.props.createMessage('User does not exist.', 'danger');
+      };
+      // new
+      if (formType === 'Register') {
+        this.props.createMessage('That user already exists.', 'danger');
+      };
+    });
+  };
   validateForm() {
     // define self as this
     const self = this;
@@ -61,13 +97,6 @@ class Form extends Component {
       if (self.allTrue()) self.setState({valid: true});
     }
   };
-
-  validateEmail(email) {
-    // eslint-disable-next-line
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-  };
-
   allTrue() {
     let formRules = loginFormRules;
     if (this.props.formType === 'Register') {
@@ -78,7 +107,6 @@ class Form extends Component {
     }
     return true;
   };
-
   resetRules() {
     const registerFormRules = this.state.registerFormRules;
     for (const rule of registerFormRules) {
@@ -92,51 +120,17 @@ class Form extends Component {
     this.setState({loginFormRules: loginFormRules})
     this.setState({valid: false});
   };
-
-  clearForm() {
-    this.setState({
-      formData: {username: '', email: '', password: ''}
-    });
+  validateEmail(email) {
+    // eslint-disable-next-line
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
   };
-
-  handleFormChange(event) {
-    const obj = this.state.formData;
-    obj[event.target.name] = event.target.value;
-    this.setState(obj);
-    this.validateForm();
-  };
-
-  handleUserFormSubmit(event) {
-    event.preventDefault();
-    const formType = this.props.formType
-    const data = {
-      email: this.state.formData.email,
-      password: this.state.formData.password
-    };
-    if (formType === 'Register') {
-      data.username = this.state.formData.username
-    };
-    const url = `${process.env.REACT_APP_USERS_SERVICE_URL}/auth/${formType.toLowerCase()}`;
-    axios.post(url, data)
-    .then((res) => {
-      this.clearForm();
-      this.props.loginUser(res.data.auth_token);
-    })
-    .catch((err) => { 
-      if (formType === 'Login') {
-        this.props.createMessage('Email or password is incorrect.', 'danger');
-      };
-      if (formType === 'Register') {
-        this.props.createMessage('That user already exists.', 'danger');
-      };
-    });
-  };
-
   render() {
     if (this.props.isAuthenticated) {
       return <Redirect to='/' />;
     };
-    let formRules = this.state.loginFormRules;
+    let formRules = this.state.loginFormRules;  // new
+    // new
     if (this.props.formType === 'Register') {
       formRules = this.state.registerFormRules;
     }
@@ -144,6 +138,7 @@ class Form extends Component {
       <div>
         <h1 className="title is-1">{this.props.formType}</h1>
         <hr/><br/>
+        {/* new */}
         <FormErrors
           formType={this.props.formType}
           formRules={formRules}
