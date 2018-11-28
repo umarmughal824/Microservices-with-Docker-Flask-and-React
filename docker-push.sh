@@ -3,9 +3,9 @@
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]
 then
 
-  if [[ "$TRAVIS_BRANCH" == "staging" ]]; then
+  if [[ "$TRAVIS_BRANCH" == "staging_" ]]; then
     export DOCKER_ENV=stage
-    export REACT_APP_USERS_SERVICE_URL="http://testdriven-staging-alb-2120066943.us-east-1.elb.amazonaws.com"
+    export REACT_APP_USERS_SERVICE_URL="http://testdriven-staging-alb-1701975220.us-east-1.elb.amazonaws.com"
   elif [[ "$TRAVIS_BRANCH" == "production" ]]; then
     export DOCKER_ENV=prod
     export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1112328201.us-east-1.elb.amazonaws.com"
@@ -13,7 +13,7 @@ then
     export SECRET_KEY="$PRODUCTION_SECRET_KEY"
   fi
 
-  if [ "$TRAVIS_BRANCH" == "staging" ] || \
+  if [ "$TRAVIS_BRANCH" == "staging_" ] || \
      [ "$TRAVIS_BRANCH" == "production" ]
   then
     curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
@@ -26,7 +26,7 @@ then
     export REPO=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
   fi
 
-  if [ "$TRAVIS_BRANCH" == "staging" ] || \
+  if [ "$TRAVIS_BRANCH" == "staging_" ] || \
      [ "$TRAVIS_BRANCH" == "production" ]
   then
     # users

@@ -3,7 +3,7 @@
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]
 then
 
-  if [ "$TRAVIS_BRANCH" == "staging" ]
+  if [ "$TRAVIS_BRANCH" == "staging_" ]
   then
 
     JQ="jq --raw-output --exit-status"
