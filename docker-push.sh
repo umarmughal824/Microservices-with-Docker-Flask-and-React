@@ -6,8 +6,10 @@ then
   # new
   if [[ "$TRAVIS_BRANCH" == "staging" ]]; then
     export DOCKER_ENV=stage
+    export	REACT_APP_USERS_SERVICE_URL="http://LOAD_BALANCER_STAGE_DNS_NAME"
   elif [[ "$TRAVIS_BRANCH" == "production" ]]; then
     export DOCKER_ENV=prod
+    export	REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-444838262.us-east-1.elb.amazonaws.com"
   fi
   if [ "$TRAVIS_BRANCH" == "staging" ] || \
      [ "$TRAVIS_BRANCH" == "production" ]
