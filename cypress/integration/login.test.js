@@ -17,15 +17,16 @@ describe('Login', () => {
 
  it('should allow a user to sign in', () => {
    // register user
-   cy
-     .visit('/register')
+   cy.visit('/register')
      .get('input[name="username"]').type(username)
      .get('input[name="email"]').type(email)
      .get('input[name="password"]').type(password)
-     .get('input[type="submit"]').click()
+     .get('input[type="submit"]').click();
+
    // log a user out
    cy.get('.navbar-burger').click();
    cy.contains('Log Out').click();
+
    // log a user in
    cy
      .get('a').contains('Log In').click()
@@ -33,34 +34,50 @@ describe('Login', () => {
      .get('input[name="password"]').type(password)
      .get('input[type="submit"]').click()
      .wait(100);
+
    // assert user is redirected to '/'
+   cy.get('.notification.is-success').contains('Welcome!');  // new
+   cy.contains('Users').click();  // new
+
    // assert '/' is displayed properly
+   cy.get('.navbar-burger').click();  // new
+   cy.location().should((loc) => { expect(loc.pathname).to.eq('/all-users') });  // new
    cy.contains('All Users');
-   cy
-     .get('table')
+   cy.get('table')
      .find('tbody > tr').last()
      .find('td').contains(username);
-   cy.get('.notification.is-success').contains('Welcome!');
    cy.get('.navbar-burger').click();
    cy.get('.navbar-menu').within(() => {
-     cy
-       .get('.navbar-item').contains('User Status')
+     cy.get('.navbar-item').contains('User Status')
        .get('.navbar-item').contains('Log Out')
        .get('.navbar-item').contains('Log In').should('not.be.visible')
+       .get('.navbar-item').contains('Swagger')  // new
        .get('.navbar-item').contains('Register').should('not.be.visible');
+   });
+   // log a user out
+   cy.get('a').contains('Log Out').click();
+
+   // assert '/logout' is displayed properly
+   cy.get('p').contains('You are now logged out');
+   cy.get('.navbar-menu').within(() => {
+     cy.get('.navbar-item').contains('User Status').should('not.be.visible')
+       .get('.navbar-item').contains('Log Out').should('not.be.visible')
+       .get('.navbar-item').contains('Log In')
+       .get('.navbar-item').contains('Swagger')  // new
+       .get('.navbar-item').contains('Register');
    });
  });
 
  it('should display the page correctly if a user is not logged in', () => {
    cy
      .visit('/')
-     .get('h1').contains('All Users')
      .get('.navbar-burger').click()
      .get('a').contains('User Status').should('not.be.visible')
      .get('a').contains('Log Out').should('not.be.visible')
      .get('a').contains('Register')
      .get('a').contains('Log In')
-     .get('.notification.is-success').should('not.be.visible');  // new
+     .get('a').contains('Swagger') // new
+     .get('.notification.is-success').should('not.be.visible');
  });
 
  it('should throw an error if the credentials are incorrect', () => {
