@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AceEditor from 'react-ace';
 import 'brace/mode/python';
 import 'brace/theme/solarized_dark';
+import axios from 'axios';
 
 class Exercises extends Component {
   constructor (props) {
@@ -52,7 +53,11 @@ class Exercises extends Component {
 
   submitExercise(event) {
     event.preventDefault();
-    console.log(this.state.editor.value);
+    const data = { answer: this.state.editor.value };
+    const url = process.env.REACT_APP_API_GATEWAY_URL;
+    axios.post(url, data)
+    .then((res) => { console.log(res); })
+    .catch((err) => { console.log(err); })
   };
 
   render() {

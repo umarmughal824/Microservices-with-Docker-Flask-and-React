@@ -10,4 +10,3 @@ class TestExerciseModel(BaseTestCase):
         self.assertTrue(exercise.body)
         self.assertEqual(exercise.test_code, 'sum(2, 2)')
         self.assertEqual(exercise.test_code_solution, '4')
-

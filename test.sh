@@ -35,7 +35,7 @@ client() {
 e2e() {
   docker-compose -f docker-compose-dev.yml up -d --build
   docker-compose -f docker-compose-dev.yml run users python manage.py recreate-db
-  ./node_modules/.bin/cypress run --config baseUrl=http://localhost
+  ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL
   inspect $? e2e
   docker-compose -f docker-compose-dev.yml down
 }

@@ -4,6 +4,7 @@ migrations/
 __pycache__/
 __snapshots__/
 node_modules/
+screenshots/
 
 .settings/
 

@@ -23,4 +23,3 @@ class Exercise(db.Model):
             'test_code': self.test_code,
             'test_code_solution': self.test_code_solution
         }
-
