@@ -26,25 +26,9 @@ class Exercises extends Component {
   };
 
   getExercises() {
-    const exercises = [
-      {
-        id: 0,
-        body: `Define a function called sum that takes
-        two integers as arguments and returns their sum.`
-      },
-      {
-        id: 1,
-        body: `Define a function called reverse that takes a string
-        as an argument and returns the string in reversed order.`
-      },
-      {
-        id: 2,
-        body: `Define a function called factorial that takes a random
-        number as an argument and then returns the factorial of that
-        given number.`,
-      }
-    ];
-    this.setState({ exercises: exercises });
+    axios.get(`${process.env.REACT_APP_EXERCISES_SERVICE_URL}/exercises`)
+    .then((res) => { this.setState({ exercises: res.data.data.exercises }); })
+    .catch((err) => { console.log(err); });
   };
 
   onChange(value) {
