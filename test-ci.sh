@@ -31,10 +31,6 @@ e2e() {
   docker-compose -f docker-compose-$1.yml up -d --build
   echo "Recreate users-db"
   docker-compose -f docker-compose-$1.yml run users python manage.py recreate-db
-  echo "Recreate exercises-db"
-  docker-compose -f docker-compose-$1.yml run exercises python manage.py recreate-db
-  echo "Set exercises-db"
-  docker-compose -f docker-compose-$1.yml run exercises python manage.py seed-db
   echo "Running cypress test"
   ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=http://localhost
   inspect $? e2e
