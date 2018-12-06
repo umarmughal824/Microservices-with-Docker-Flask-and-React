@@ -10,7 +10,11 @@ class Exercises extends Component {
     this.state = {
       exercises: [],
       editor: {
-        value: '# Enter your code here.'
+        value: '# Enter your code here.',
+        button: { isDisabled: false, },
+        showGrading: false,
+        showCorrect: false,
+        showIncorrect: false,
       }
     };
     this.onChange = this.onChange.bind(this);
@@ -44,20 +48,34 @@ class Exercises extends Component {
   };
 
   onChange(value) {
-    this.setState({
-      editor: {
-        value: value
-      }
-    });
+    const newState = this.state.editor;
+    newState.value = value;
+    this.setState(newState);
   };
 
   submitExercise(event) {
     event.preventDefault();
+    const newState = this.state.editor;
+    newState.showGrading = true;
+    newState.showCorrect = false;
+    newState.showIncorrect = false;
+    newState.button.isDisabled = true;
+    this.setState(newState);
     const data = { answer: this.state.editor.value };
     const url = process.env.REACT_APP_API_GATEWAY_URL;
     axios.post(url, data)
-    .then((res) => { console.log(res); })
-    .catch((err) => { console.log(err); })
+    .then((res) => { 
+      newState.showGrading = false
+      newState.button.isDisabled = false
+      if (res.data) { newState.showCorrect = true };
+      if (!res.data) { newState.showIncorrect = true };
+      this.setState(newState);
+    })
+    .catch((err) => { 
+      newState.showGrading = false;
+      newState.button.isDisabled = false;
+      console.log(err);
+    })
   };
 
   render() {
@@ -94,7 +112,36 @@ class Exercises extends Component {
                   onChange={this.onChange}
                 />
               {this.props.isAuthenticated &&
-                <button className="button is-primary" onClick={this.submitExercise}>Run Code</button>
+                <div>
+                  <button 
+                    className="button is-primary" 
+                    onClick={this.submitExercise}
+                    disabled={this.state.editor.button.isDisabled}
+                  >Run Code</button>
+                  {this.state.editor.showGrading &&
+                    <h5 className="title is-5">
+                      <span className="icon is-large">
+                        <i className="fas fa-spinner fa-pulse"></i>
+                      </span>
+                    </h5>
+                  }
+                </div>
+              }
+              {this.state.editor.showCorrect &&
+                <h5 className="title is-5">
+                  <span className="icon is-large">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span className="grade-text">Correct!</span>
+                </h5>
+              }
+              {this.state.editor.showIncorrect &&
+                <h5 className="title is-5">
+                  <span className="icon is-large">
+                    <i className="fas fa-times"></i>
+                  </span>
+                  <span className="grade-text">Incorrect!</span>
+                </h5>
               }
               <br/><br/>
             </div>
