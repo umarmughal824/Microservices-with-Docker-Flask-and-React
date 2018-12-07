@@ -9,6 +9,12 @@ inspect() {
   fi
 }
 
+tempInspect() {
+  if [ $1 -ne 0 ]; then
+    echo "error: $2"
+  fi
+}
+
 # run client and server-side tests
 dev() {
   docker-compose -f docker-compose-dev.yml up -d --build
@@ -29,8 +35,16 @@ dev() {
 e2e() {
   echo "Create containers"
   docker-compose -f docker-compose-$1.yml up -d --build
+  tempInspect $? buildContainers
   echo "Recreate users-db"
   docker-compose -f docker-compose-$1.yml run users python manage.py recreate-db
+  tempInspect $? recreateUserDB
+  echo "Recreate exercises-db"
+  docker-compose -f docker-compose-$1.yml run exercises python manage.py recreate-db
+  tempInspect $? recreateExercisesDB
+  echo "Set exercises-db"
+  docker-compose -f docker-compose-$1.yml run exercises python manage.py seed-db
+  tempInspect $? setExercisesDB
   echo "Running cypress test"
   ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=http://localhost
   inspect $? e2e
