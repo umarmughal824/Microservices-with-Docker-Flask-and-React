@@ -27,13 +27,15 @@ describe('Login', () => {
    cy.get('.navbar-burger').click();
    cy.contains('Log Out').click();
 
+   cy.server();
+   cy.route('POST', 'auth/login').as('loginUser');
    // log a user in
    cy
      .get('a').contains('Log In').click()
      .get('input[name="email"]').type(email)
      .get('input[name="password"]').type(password)
      .get('input[type="submit"]').click()
-     .wait(500);
+     .wait('@loginUser');
 
    // assert user is redirected to '/'
    cy.get('.notification.is-success').contains('Welcome!');  // new
