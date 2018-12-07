@@ -46,7 +46,7 @@ e2e() {
   docker-compose -f docker-compose-$1.yml run exercises python manage.py seed-db
   tempInspect $? setExercisesDB
   echo "Running cypress test"
-  ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=http://testdriven-staging-alb-1701975220.us-east-1.elb.amazonaws.com
+  ./node_modules/.bin/cypress run --config baseUrl=$REACT_APP_USERS_SERVICE_URL --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=$LOAD_BALANCER_STAGE_DNS_NAME
   inspect $? e2e
   docker-compose -f docker-compose-$1.yml down
 }
