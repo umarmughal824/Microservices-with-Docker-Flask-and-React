@@ -9,6 +9,12 @@ inspect() {
   fi
 }
 
+tempInspect() {
+  if [ $1 -ne 0 ]; then
+    echo "error: $2"
+  fi
+}
+
 # run client and server-side tests
 dev() {
   docker-compose -f docker-compose-dev.yml up -d --build
@@ -16,6 +22,10 @@ dev() {
   inspect $? users
   docker-compose -f docker-compose-dev.yml run users flake8 project
   inspect $? users-lint
+  docker-compose -f docker-compose-dev.yml run exercises python manage.py test
+  inspect $? exercises
+  docker-compose -f docker-compose-dev.yml run exercises flake8 project
+  inspect $? exercises-lint
   docker-compose -f docker-compose-dev.yml run client npm test -- --coverage
   inspect $? client
   docker-compose -f docker-compose-dev.yml down
@@ -24,9 +34,20 @@ dev() {
 # run e2e tests
 # new
 e2e() {
-  docker-compose -f docker-compose-stage.yml up -d --build
-  docker-compose -f docker-compose-stage.yml run users python manage.py recreate-db
-  ./node_modules/.bin/cypress run --config baseUrl=http://localhost
+  echo "Create containers"
+  docker-compose -f docker-compose-$1.yml up -d --build
+  tempInspect $? buildContainers
+  echo "Recreate users-db"
+  docker-compose -f docker-compose-$1.yml run users python manage.py recreate-db
+  tempInspect $? recreateUserDB
+  echo "Recreate exercises-db"
+  docker-compose -f docker-compose-$1.yml run exercises python manage.py recreate-db
+  tempInspect $? recreateExercisesDB
+  echo "Set exercises-db"
+  docker-compose -f docker-compose-$1.yml run exercises python manage.py seed-db
+  tempInspect $? setExercisesDB
+  echo "Running cypress test"
+  ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=$LOAD_BALANCER_STAGE_DNS_NAME
   inspect $? e2e
   docker-compose -f docker-compose-$1.yml down
 }

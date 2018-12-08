@@ -16,7 +16,11 @@ server() {
   docker-compose -f docker-compose-dev.yml run users python manage.py test
   inspect $? users
   docker-compose -f docker-compose-dev.yml run users flake8 project
-  inspect $? users-lint
+  inspect $? users-lintba
+  docker-compose -f docker-compose-dev.yml run exercises python manage.py test
+  inspect $? exercises
+  docker-compose -f docker-compose-dev.yml run exercises flake8 project
+  inspect $? exercises-lint
   docker-compose -f docker-compose-dev.yml down
 }
 
@@ -31,9 +35,11 @@ client() {
 # run e2e tests
 # new
 e2e() {
-  docker-compose -f docker-compose-stage.yml up -d --build
-  docker-compose -f docker-compose-stage.yml run users python manage.py recreate-db
-  ./node_modules/.bin/cypress run --config baseUrl=http://localhost
+  docker-compose -f docker-compose-dev.yml up -d --build
+  docker-compose -f docker-compose-dev.yml run users python manage.py recreate-db
+  docker-compose -f docker-compose-dev.yml run exercises python manage.py recreate-db
+  docker-compose -f docker-compose-dev.yml run exercises python manage.py seed-db
+  ./node_modules/.bin/cypress run --config baseUrl=http://localhost  --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=http://localhost
   inspect $? e2e
   docker-compose -f docker-compose-stage.yml down
 }
@@ -45,6 +51,10 @@ all() {
   inspect $? users
   docker-compose -f docker-compose-dev.yml run users flake8 project
   inspect $? users-lint
+  docker-compose -f docker-compose-dev.yml run exercises python manage.py test
+  inspect $? exercises
+  docker-compose -f docker-compose-dev.yml run exercises flake8 project
+  inspect $? exercises-lint
   docker-compose -f docker-compose-dev.yml run client npm test -- --coverage
   inspect $? client
   docker-compose -f docker-compose-dev.yml down
@@ -53,30 +63,32 @@ all() {
 
 # run appropriate tests
 if [[ "${type}" == "server" ]]; then
-  echo "\n"
-  echo "Running server-side tests!\n"
+  echo ""
+  echo "Running server-side tests!"
   server
 elif [[ "${type}" == "client" ]]; then
-  echo "\n"
-  echo "Running client-side tests!\n"
+  echo ""
+  echo "Running client-side tests!"
   client
 elif [[ "${type}" == "e2e" ]]; then
-  echo "\n"
-  echo "Running e2e tests!\n"
+  echo ""
+  echo "Running e2e tests!"
   e2e
 else
-  echo "\n"
-  echo "Running all tests!\n"
+  echo ""
+  echo "Running all tests!"
   all
 fi
 
 # return proper code
 if [ -n "${fails}" ]; then
-  echo "\n"
+  echo ""
   echo "Tests failed: ${fails}"
   exit 1
 else
-  echo "\n"
+  echo ""
   echo "Tests passed!"
   exit 0
 fi
+
+echo ""

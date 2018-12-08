@@ -8,6 +8,8 @@ import Form from './components/forms/Form';
 import Logout from './components/Logout';
 import UserStatus from './components/UserStatus';
 import Message from './components/Message';
+import Footer from './components/Footer';
+import Exercises from './components/Exercises';
 
 class App extends Component {
 
@@ -93,6 +95,11 @@ class App extends Component {
                 <br/>
                 <Switch>
                   <Route exact path='/' render={() => (
+                    <Exercises 
+                      isAuthenticated={this.state.isAuthenticated}
+                    />
+                  )} />
+                  <Route exact path='/all-users' render={() => (
                     <UsersList
                       users={this.state.users}
                     />
@@ -130,6 +137,7 @@ class App extends Component {
             </div>
           </div>
         </section>
+        <Footer/>
       </div>
     )
   }
