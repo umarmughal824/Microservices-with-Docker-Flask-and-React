@@ -60,3 +60,11 @@ def add_exercise(resp):
             'message': 'Invalid payload.'
         }
         return jsonify(response_object), 400
+
+
+@exercises_blueprint.route('/exercises/ping', methods=['GET'])
+def ping_pong():
+    return jsonify({
+        'status': 'success',
+        'message': 'pong!'
+    })
