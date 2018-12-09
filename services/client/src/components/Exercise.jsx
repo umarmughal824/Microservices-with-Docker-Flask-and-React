@@ -1,7 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 import 'brace/mode/python';
 import 'brace/theme/solarized_dark';
+
 const Exercise = (props) => {
   return (
     <div key={props.exercise.id}>
@@ -61,4 +63,24 @@ const Exercise = (props) => {
     </div>
   )
 };
+
+Exercise.propTypes = {
+  exercise: PropTypes.shape({
+    body: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
+    test_code: PropTypes.string.isRequired,
+    test_code_solution: PropTypes.string.isRequired,
+  }).isRequired,
+  editor: PropTypes.shape({
+    button: PropTypes.object.isRequired,
+    showCorrect: PropTypes.bool.isRequired,
+    showGrading: PropTypes.bool.isRequired,
+    showIncorrect: PropTypes.bool.isRequired,
+    value: PropTypes.string.isRequired,
+  }).isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+  onChange: PropTypes.func.isRequired,
+  submitExercise: PropTypes.func.isRequired,
+};
+
 export default Exercise;

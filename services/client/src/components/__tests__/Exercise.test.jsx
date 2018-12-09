@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import renderer from 'react-test-renderer';
+
 import AceEditor from 'react-ace';
 jest.mock('react-ace');
 
@@ -25,6 +26,11 @@ const testData = {
   onChange: jest.fn(),
   submitExercise: jest.fn(),
 }
+
+beforeEach(() => {
+  console.error = jest.fn();
+  console.error.mockClear();
+});
 
 test('Exercise renders properly', () => {
   const wrapper = shallow(<Exercise {...testData}/>);

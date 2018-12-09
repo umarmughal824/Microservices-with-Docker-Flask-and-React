@@ -29,6 +29,8 @@ const testData = [
 
 describe('When not authenticated', () => {
   testData.forEach((el) => {
+    console.error = jest.fn();
+    console.error.mockClear();
     const component = <Form {...el} />;
 
     it(`${el.formType} Form renders properly`, () => {
@@ -72,6 +74,8 @@ describe('When not authenticated', () => {
 
 describe('When authenticated', () => {
   testData.forEach((el) => {
+    console.error = jest.fn();
+    console.error.mockClear();
     const component = <Form
       formType={el.formType}
       formData={el.formData}
