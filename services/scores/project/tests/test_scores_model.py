@@ -12,4 +12,3 @@ class TestScoreModel(BaseTestCase):
         self.assertTrue(score.user_id)
         self.assertTrue(score.exercise_id)
         self.assertTrue(score.correct)
-        
