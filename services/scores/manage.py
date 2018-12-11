@@ -1,12 +1,15 @@
 # manage.py
 
 
+import os
+import requests
 import unittest
 import coverage
 
 from flask.cli import FlaskGroup
 
 from project import create_app
+from project.api.models import Score
 
 
 COV = coverage.coverage(
@@ -47,6 +50,27 @@ def cov():
         COV.erase()
         return 0
     return 1
+
+
+@cli.command()
+def seed_db():
+    """Seeds the database."""
+    # get exercises
+    url = '{0}/exercises'.format(os.environ.get('EXERCISES_SERVICE_URL'))
+    response = requests.get(url)
+    exercises = response.json()['data']['exercises']
+    # get users
+    url = '{0}/users'.format(os.environ.get('USERS_SERVICE_URL'))
+    response = requests.get(url)
+    users = response.json()['data']['users']
+    # seed
+    for user in users:
+        for exercise in exercises:
+            db.session.add(Score(
+                user_id=user['id'],
+                exercise_id=exercise['id']
+            ))
+    db.session.commit()
 
 
 if __name__ == '__main__':

@@ -4,10 +4,7 @@ from project import db
 from project.api.models import Score
 
 
-def add_score(
-        user_id=1,
-        exercise_id=1,
-        correct=True):
+def add_score(user_id, exercise_id, correct):
 
     score = Score(
         user_id=user_id,

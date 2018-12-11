@@ -12,12 +12,12 @@ class BaseConfig:
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration"""
     DEBUG_TB_ENABLED = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class TestingConfig(BaseConfig):
@@ -29,10 +29,8 @@ class TestingConfig(BaseConfig):
 class StagingConfig(BaseConfig):
     """Staging configuration"""
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class ProductionConfig(BaseConfig):
     """Production configuration"""
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
