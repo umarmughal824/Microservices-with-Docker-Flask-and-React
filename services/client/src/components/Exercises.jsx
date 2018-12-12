@@ -7,7 +7,7 @@ class Exercises extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      currentExercise: 0,  // new
+      currentExercise: 0,
       exercises: [],
       editor: {
         value: '# Enter your code here.',
@@ -16,7 +16,6 @@ class Exercises extends Component {
         showCorrect: false,
         showIncorrect: false,
       },
-      // new
       showButtons: {
         prev: false,
         next: false,
@@ -25,14 +24,17 @@ class Exercises extends Component {
     this.onChange = this.onChange.bind(this);
     this.submitExercise = this.submitExercise.bind(this);
     this.updateScore = this.updateScore.bind(this);
-    this.renderButtons = this.renderButtons.bind(this); // new
+    this.renderButtons = this.renderButtons.bind(this);
+    this.nextExercise = this.nextExercise.bind(this);
+    this.prevExercise = this.prevExercise.bind(this);
+    this.resetEditor = this.resetEditor.bind(this);
   };
 
   componentDidMount() {
     this.getExercises();
   };
 
-  renderButtons() { // new
+  renderButtons() {
     const index = this.state.currentExercise;
     let nextButton = false;
     let prevButton = false;
@@ -50,16 +52,49 @@ class Exercises extends Component {
     });
   };
 
+  nextExercise() {
+    if (this.state.showButtons.next) {
+      const currentExercise = this.state.currentExercise;
+      this.setState({currentExercise: currentExercise + 1}, () => {
+        this.resetEditor();
+        this.renderButtons();
+      });
+    }
+  };
+
+  prevExercise() {
+    if (this.state.showButtons.prev) {
+      const currentExercise = this.state.currentExercise;
+      this.setState({currentExercise: currentExercise - 1}, () => {
+        this.resetEditor();
+        this.renderButtons();
+      });
+    }
+  };
+
   getExercises() {
     axios.get(`${process.env.REACT_APP_EXERCISES_SERVICE_URL}/exercises`)
     .then((res) => { 
       this.setState({ 
         exercises: res.data.data.exercises, 
-        currentExercise: 0 // new
+        currentExercise: 0
       });
-      this.renderButtons();  // new 
+      this.renderButtons();
     })
     .catch((err) => { console.log(err); });
+  };
+
+  resetEditor() {
+    const editor = {
+      value: '# Enter your code here.',
+      button: {
+        isDisabled: false,
+      },
+      showGrading: false,
+      showCorrect: false,
+      showIncorrect: false,
+    }
+    this.setState({editor: editor});
   };
 
   updateScore(exerciseID, bool) {
@@ -139,14 +174,19 @@ class Exercises extends Component {
             submitExercise={this.submitExercise}
           />
       }
-        {/* new */}
         <div className="field is-grouped">
           { this.state.showButtons.prev &&
-            <button className="button is-info">&lt; Prev</button>
+            <button 
+              className="button is-info"
+              onClick={() => this.prevExercise()}
+            >&lt; Prev</button>
           }
           &nbsp;
           { this.state.showButtons.next &&
-            <button className="button is-info">Next &gt;</button>
+            <button 
+              className="button is-info"
+              onClick={() => this.nextExercise()}
+            >Next &gt;</button>
           }
         </div>
       </div>
