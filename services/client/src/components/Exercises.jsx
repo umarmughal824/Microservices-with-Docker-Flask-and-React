@@ -18,6 +18,7 @@ class Exercises extends Component {
     };
     this.onChange = this.onChange.bind(this);
     this.submitExercise = this.submitExercise.bind(this);
+    this.updateScore = this.updateScore.bind(this);
   };
 
   componentDidMount() {
@@ -28,6 +29,21 @@ class Exercises extends Component {
     axios.get(`${process.env.REACT_APP_EXERCISES_SERVICE_URL}/exercises`)
     .then((res) => { this.setState({ exercises: res.data.data.exercises }); })
     .catch((err) => { console.log(err); });
+  };
+
+  updateScore(exerciseID, bool) {
+    const options = {
+      url: `${process.env.REACT_APP_SCORES_SERVICE_URL}/scores/${exerciseID}`,
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${window.localStorage.authToken}`
+      },
+      data: {correct:bool}
+    };
+    return axios(options)
+    .then((res) => { console.log(res); })
+    .catch((error) => { console.log(error); });
   };
 
   onChange(value) {
@@ -56,8 +72,14 @@ class Exercises extends Component {
     .then((res) => { 
       newState.showGrading = false
       newState.button.isDisabled = false
-      if (res.data && !res.data.errorType) { newState.showCorrect = true };
-      if (!res.data || res.data.errorType) { newState.showIncorrect = true };
+      if (res.data && !res.data.errorType) {
+        newState.showCorrect = true
+        this.updateScore(exercise.id, true)
+      };
+      if (!res.data || res.data.errorType) {
+        newState.showIncorrect = true
+        this.updateScore(exercise.id, false)
+      };
       this.setState(newState);
     })
     .catch((err) => { 
