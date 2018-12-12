@@ -30,7 +30,7 @@ describe('Index', () => {
       .get('input[name="password"]').type(password)
       .get('input[type="submit"]').click()
       .wait('@createUser')
-      .wait(200); // maybe waiting for react rendering
+      .wait(1000); // maybe waiting for react rendering
     // assert '/' is displayed properly
     cy
       .get('h1').contains('Exercises')
