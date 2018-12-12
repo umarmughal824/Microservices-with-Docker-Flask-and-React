@@ -26,6 +26,10 @@ dev() {
   inspect $? exercises
   docker-compose -f docker-compose-dev.yml run exercises flake8 project
   inspect $? exercises-lint
+  docker-compose -f docker-compose-dev.yml run scores python manage.py test
+  inspect $? scores
+  docker-compose -f docker-compose-dev.yml run scores flake8 project
+  inspect $? scores-lint
   docker-compose -f docker-compose-dev.yml run client npm test -- --coverage
   inspect $? client
   docker-compose -f docker-compose-dev.yml down
@@ -45,6 +49,12 @@ e2e() {
   echo "Set exercises-db"
   docker-compose -f docker-compose-$1.yml run exercises python manage.py seed-db
   tempInspect $? setExercisesDB
+  echo "Recreate scores-db"
+  docker-compose -f docker-compose-$1.yml run scores python manage.py recreate-db
+  tempInspect $? recreateScoresDB
+  echo "Set scores-db"
+  docker-compose -f docker-compose-$1.yml run scores python manage.py seed-db
+  tempInspect $? setScoresDB
   echo "Running cypress test"
   ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=$LOAD_BALANCER_STAGE_DNS_NAME
   inspect $? e2e

@@ -5,6 +5,11 @@ import { MemoryRouter as Router } from 'react-router-dom';
 
 import NavBar from '../NavBar';
 
+beforeEach(() => {
+  console.error = jest.fn();
+  console.error.mockClear();
+});
+
 const title = 'Hello, World!';
 test('NavBar renders properly', () => {
   const wrapper = shallow(<NavBar title={title}/>);

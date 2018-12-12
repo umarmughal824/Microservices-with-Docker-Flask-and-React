@@ -1,13 +1,15 @@
 # manage.py
 
 
+import os
+import requests
 import unittest
 import coverage
 
 from flask.cli import FlaskGroup
 
 from project import create_app, db
-from project.api.models import Exercise
+from project.api.models import Score
 
 
 COV = coverage.coverage(
@@ -56,29 +58,27 @@ def recreate_db():
     db.create_all()
     db.session.commit()
 
+
 @cli.command()
 def seed_db():
     """Seeds the database."""
-    db.session.add(Exercise(
-        body=('Define a function called sum that takes two integers as '
-              'arguments and returns their sum.'),
-        test_code='sum(2, 3)',
-        test_code_solution='5'
-    ))
-    db.session.add(Exercise(
-        body=('Define a function called reverse that takes a string as '
-              'an argument and returns the string in reversed order.'),
-        test_code='reverse("racecar")',
-        test_code_solution='racecar'
-    ))
-    db.session.add(Exercise(
-        body=('Define a function called factorial that takes a random number '
-              'as an argument and then returns the factorial of that given '
-              'number.'),
-        test_code='factorial(5)',
-        test_code_solution='120'
-    ))
+    # get exercises
+    url = '{0}/exercises'.format(os.environ.get('EXERCISES_SERVICE_URL'))
+    response = requests.get(url)
+    exercises = response.json()['data']['exercises']
+    # get users
+    url = '{0}/users'.format(os.environ.get('USERS_SERVICE_URL'))
+    response = requests.get(url)
+    users = response.json()['data']['users']
+    # seed
+    for user in users:
+        for exercise in exercises:
+            db.session.add(Score(
+                user_id=user['id'],
+                exercise_id=exercise['id']
+            ))
     db.session.commit()
+
 
 if __name__ == '__main__':
     cli()
