@@ -29,26 +29,30 @@ describe('Index', () => {
       .get('input[name="email"]').type(email)
       .get('input[name="password"]').type(password)
       .get('input[type="submit"]').click()
-      .wait('@createUser')
-      .wait(1000);
-    // assert '/' is displayed properly
+      .wait('@createUser');
+
+    // assert exercises are displayed correctly
     cy
       .get('h1').contains('Exercises')
+      .get('.notification.is-success').contains('Welcome!')
+      .get('.notification.is-danger').should('not.be.visible')
+      .get('button.button.is-primary').contains('Run Code')
+      .get('.field.is-grouped')
+      .get('button').contains('Next')
+      .get('button').contains('Prev').should('not.be.visible');
+
+    // assert '/' is displayed properly
+    cy
       .get('.navbar-burger').click()
       .get('a').contains('User Status')
       .get('a').contains('Log Out')
       .get('a').contains('Register').should('not.be.visible')
       .get('a').contains('Log In').should('not.be.visible')
       .get('a').contains('Swagger')
-      .get('a').contains('Users')
-      .get('button').contains('Run Code')
-      .get('.notification.is-warning').should('not.be.visible')
-      .get('.notification.is-success').should('not.be.visible');
+      .get('a').contains('Users');
   });
 
 });
-
-
 
 describe('Go_to_About_page', () => {
   it('users should be able to view the page navigate to About', () => {

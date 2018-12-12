@@ -16,11 +16,15 @@ server() {
   docker-compose -f docker-compose-dev.yml run users python manage.py test
   inspect $? users
   docker-compose -f docker-compose-dev.yml run users flake8 project
-  inspect $? users-lintba
+  inspect $? users-lint
   docker-compose -f docker-compose-dev.yml run exercises python manage.py test
   inspect $? exercises
   docker-compose -f docker-compose-dev.yml run exercises flake8 project
   inspect $? exercises-lint
+  docker-compose -f docker-compose-dev.yml run scores python manage.py test
+  inspect $? scores
+  docker-compose -f docker-compose-dev.yml run scores flake8 project
+  inspect $? scores-lint
   docker-compose -f docker-compose-dev.yml down
 }
 
@@ -39,7 +43,9 @@ e2e() {
   docker-compose -f docker-compose-dev.yml run users python manage.py recreate-db
   docker-compose -f docker-compose-dev.yml run exercises python manage.py recreate-db
   docker-compose -f docker-compose-dev.yml run exercises python manage.py seed-db
-  ./node_modules/.bin/cypress run --config baseUrl=http://localhost  --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=http://localhost
+  docker-compose -f docker-compose-dev.yml run scores python manage.py recreate-db
+  docker-compose -f docker-compose-dev.yml run scores python manage.py seed-db
+  ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_DNS_NAME=$LOAD_BALANCER_DNS_NAME
   inspect $? e2e
   docker-compose -f docker-compose-stage.yml down
 }
@@ -55,6 +61,10 @@ all() {
   inspect $? exercises
   docker-compose -f docker-compose-dev.yml run exercises flake8 project
   inspect $? exercises-lint
+  docker-compose -f docker-compose-dev.yml run scores python manage.py test
+  inspect $? scores
+  docker-compose -f docker-compose-dev.yml run scores flake8 project
+  inspect $? scores-lint
   docker-compose -f docker-compose-dev.yml run client npm test -- --coverage
   inspect $? client
   docker-compose -f docker-compose-dev.yml down
