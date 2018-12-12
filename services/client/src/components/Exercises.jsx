@@ -7,6 +7,7 @@ class Exercises extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      currentExercise: 0,  // new
       exercises: [],
       editor: {
         value: '# Enter your code here.',
@@ -14,20 +15,50 @@ class Exercises extends Component {
         showGrading: false,
         showCorrect: false,
         showIncorrect: false,
-      }
+      },
+      // new
+      showButtons: {
+        prev: false,
+        next: false,
+      },
     };
     this.onChange = this.onChange.bind(this);
     this.submitExercise = this.submitExercise.bind(this);
     this.updateScore = this.updateScore.bind(this);
+    this.renderButtons = this.renderButtons.bind(this); // new
   };
 
   componentDidMount() {
     this.getExercises();
   };
 
+  renderButtons() { // new
+    const index = this.state.currentExercise;
+    let nextButton = false;
+    let prevButton = false;
+    if (typeof this.state.exercises[index + 1] !== 'undefined') {
+      nextButton = true;
+    }
+    if (typeof this.state.exercises[index - 1] !== 'undefined') {
+      prevButton = true;
+    }
+    this.setState({
+      showButtons: {
+        next: nextButton,
+        prev: prevButton
+      }
+    });
+  };
+
   getExercises() {
     axios.get(`${process.env.REACT_APP_EXERCISES_SERVICE_URL}/exercises`)
-    .then((res) => { this.setState({ exercises: res.data.data.exercises }); })
+    .then((res) => { 
+      this.setState({ 
+        exercises: res.data.data.exercises, 
+        currentExercise: 0 // new
+      });
+      this.renderButtons();  // new 
+    })
     .catch((err) => { console.log(err); });
   };
 
@@ -101,13 +132,23 @@ class Exercises extends Component {
         }
         {this.state.exercises.length > 0 &&
           <Exercise
-            exercise={this.state.exercises[0]}
+            exercise={this.state.exercises[this.state.currentExercise]}
             editor={this.state.editor}
             isAuthenticated={this.props.isAuthenticated}
             onChange={this.onChange}
             submitExercise={this.submitExercise}
           />
       }
+        {/* new */}
+        <div className="field is-grouped">
+          { this.state.showButtons.prev &&
+            <button className="button is-info">&lt; Prev</button>
+          }
+          &nbsp;
+          { this.state.showButtons.next &&
+            <button className="button is-info">Next &gt;</button>
+          }
+        </div>
       </div>
     )
   };

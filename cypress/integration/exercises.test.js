@@ -11,7 +11,10 @@ describe('Exercises', () => {
       .visit('/')
       .get('h1').contains('Exercises')
       .get('.notification.is-warning').contains('Please log in to submit an exercise.')
-      .get('button').should('not.be.visible');
+      .get('button').contains('Run Code').should('not.be.visible')
+      .get('.field.is-grouped')
+      .get('button').contains('Next')
+      .get('button').contains('Prev').should('not.be.visible');
   });
 
   it('should allow a user to submit an exercise if logged in', () => {
@@ -31,7 +34,10 @@ describe('Exercises', () => {
       .get('h1').contains('Exercises')
       .get('.notification.is-success').contains('Welcome!')
       .get('.notification.is-danger').should('not.be.visible')
-      .get('button.button.is-primary').contains('Run Code');
+      .get('button.button.is-primary').contains('Run Code')
+      .get('.field.is-grouped')
+      .get('button').contains('Next')
+      .get('button').contains('Prev').should('not.be.visible');
     // assert user can submit an exercise
     for (let i = 0; i < 23; i++) {
       cy.get('textarea').type('{backspace}', { force: true })
