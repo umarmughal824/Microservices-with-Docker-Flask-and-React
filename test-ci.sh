@@ -40,23 +40,6 @@ e2e() {
   echo "Create containers"
   docker-compose -f docker-compose-stage.yml up -d --build
   tempInspect $? buildContainers
-  if [[ "$1" == "stage" ]]; then
-    echo "Recreate users-db"
-    docker-compose -f docker-compose-stage.yml run users python manage.py recreate-db
-    tempInspect $? recreateUserDB
-    echo "Recreate exercises-db"
-    docker-compose -f docker-compose-stage.yml run exercises python manage.py recreate-db
-    tempInspect $? recreateExercisesDB
-    echo "Set exercises-db"
-    docker-compose -f docker-compose-stage.yml run exercises python manage.py seed-db
-    tempInspect $? setExercisesDB
-    echo "Recreate scores-db"
-    docker-compose -f docker-compose-stage.yml run scores python manage.py recreate-db
-    tempInspect $? recreateScoresDB
-    echo "Set scores-db"
-    docker-compose -f docker-compose-stage.yml run scores python manage.py seed-db
-    tempInspect $? setScoresDB
-  fi
   echo "Running cypress test"
   ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=$LOAD_BALANCER_STAGE_DNS_NAME
   inspect $? e2e
